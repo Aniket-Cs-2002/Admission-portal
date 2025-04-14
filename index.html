@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admission Portal</title> 
+    <link rel="stylesheet" href="styles.css">  
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />    
+</head>
+<body>
+    <!-- Navbar Section -->
+    <nav class="navbar">
+        <div class="logo">Admission Portal</div>
+        <div class="nav-image">
+            <img src="E:/GENAI-PROJECT/logo.png" alt="Logo" />
+        </div>
+        <div class="nav-buttons">
+            <button onclick="contactUs()">Contact Us</button>
+            <button onclick="alert('Admin Dashboard clicked!')">Admin Dashboard</button>
+        </div>
+    </nav>
+
+
+    <div id="admission-form" class="tab-content active">
+        <h1 style="text-align: center; margin-bottom: 20px;">ADMISSION FORM</h1>
+        <form id="admissionForm" enctype="multipart/form-data">
+            <label for="full-name">Full Name</label>
+            <input type="text" id="full-name" name="fullName" placeholder="First, Middle, Last" required>
+            
+            <label for="phone-number">Phone Number</label>
+            <input type="text" id="phone-number" name="phoneNumber" placeholder="Mobile & Landline" required>
+            
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="example@example.com" required>
+            
+            <label for="course">Course/Program Applied For</label>
+            <input type="text" id="course" name="course" required>
+            
+            <label for="school-info">High School/Secondary School Information</label>
+            <textarea id="school-info" name="schoolInfo" rows="3" required></textarea>
+            
+            <label for="graduation-year">Year of Graduation</label>
+            <input type="date" id="graduation-year" name="graduationYear" required>
+            
+            <label for="grade">Grade/Percentage/CGPA</label>
+            <input type="text" id="grade" name="grade" required>
+            
+            <label for="entrance-exam">Name of the Entrance Exam(s) taken</label>
+            <input type="text" id="entrance-exam" name="entranceExam">
+            
+            <label for="exam-score">Exam Score/Result</label>
+            <input type="text" id="exam-score" name="examScore">
+            
+            <label for="document-upload">Document Upload</label>
+            <input type="file" id="document-upload" name="documentUpload" required>
+            
+            <!-- Add Submit and Reset buttons -->
+            <div style="margin-top: 20px;">
+                <button type="submit">Submit</button>
+                <button type="reset">Reset</button>
+            </div>
+        </form>
+        <div id="successMessage" style="display: none;">
+            Please check your Email for further updates.
+        </div>
+    </div>
+
+    <script type="module">
+        import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+    
+        createChat({
+            webhookUrl: 'http://localhost:5678/webhook/3387e878-6b41-4bac-a82e-9598a93ed6c8/chat',
+            showWelcomeScreen: true,
+            initialMessages: [
+		"Hi there! 👋", "How may I help you with your loan queries ?"
+	],
+	i18n: {
+		en: {
+			title: 'Loan Assistant',
+			subtitle: "Start a chat. We're here to help you 24/7.",
+			footer: '',
+			getStarted: 'New Conversation',
+			inputPlaceholder: 'Ask your loan related queries....',
+		},
+	},
+        });
+    </script>
+    <script>
+        function contactUs() {
+        alert("Contact Us Here at\n📞 (+91)8240815528");
+    }
+
+        
+        const form = document.getElementById('admissionForm');
+        const successMessage = document.getElementById('successMessage');
+    
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent the default form submission
+    
+            // Create a FormData object to gather form data
+            const formData = new FormData(form);
+    
+            try {
+                // Send the form data to the webhook URL using fetch
+                const response = await fetch('http://localhost:5678/webhook/admission-portal', {
+                    method: 'POST',
+                    body: formData,
+                });
+    
+                if (response.ok) {
+                    // If the webhook is triggered successfully, show the success message
+                    form.style.display = 'none';
+                    successMessage.style.display = 'block';
+                } else {
+                    alert('There was an error triggering the workflow. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An unexpected error occurred. Please try again.');
+            }
+        });
+    
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+    
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+    
+            document.querySelector(`.tab[onclick="showTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
